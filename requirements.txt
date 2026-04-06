@@ -1,0 +1,34 @@
+# Core libraries
+numpy>=2.0.0
+pandas>=2.1.0
+scikit-learn>=1.5.0
+
+# Hugging Face
+transformers>=4.48.0,<5.0  # 4.48+ required for ModernBERT support
+datasets>=2.14.0
+tokenizers>=0.19.0
+evaluate>=0.4.0             # compute_metrics for HF Trainer
+
+# PyTorch (install matching versions — see pytorch.org for CUDA-specific builds)
+torch>=2.2.0
+torchvision>=0.19.0
+torchaudio>=2.2.0
+
+# Training utilities
+accelerate>=1.0.0           # mixed-precision training on HPC cluster
+sentencepiece>=0.2.0
+
+# Config
+pyyaml>=6.0.1
+
+# Notebook & visualization
+jupyterlab>=4.2.0
+ipykernel>=6.29.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Experiment tracking
+wandb>=0.16.0
+
+# Environment
+python-dotenv>=1.0.0
