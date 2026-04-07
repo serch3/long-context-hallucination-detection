@@ -13,7 +13,7 @@ RAW_DIR="$REPO_ROOT/data/raw"
 
 download_halueval() {
     local save_path="$RAW_DIR/halueval"
-    if [ -d "$save_path" ]; then
+    if [ -d "$save_path" ] && [ -n "$(ls -A "$save_path" 2>/dev/null)" ]; then
         echo "==> HaluEval already exists at $save_path — skipping."
         return
     fi
@@ -21,27 +21,32 @@ download_halueval() {
     mkdir -p "$save_path"
     python3 - <<PYEOF
 from datasets import load_dataset
-dataset = load_dataset("pminervini/HaluEval")
-dataset.save_to_disk("$save_path")
-print(f"  Saved splits: {list(dataset.keys())}")
+
+configs = ["dialogue", "dialogue_samples", "general", "qa", "qa_samples", "summarization", "summarization_samples"]
+for config in configs:
+    print(f"  Downloading config: {config}")
+    dataset = load_dataset("pminervini/HaluEval", config)
+    dataset.save_to_disk(f"$save_path/{config}")
+    print(f"    Saved splits: {list(dataset.keys())}")
 PYEOF
     echo "✅ HaluEval saved to $save_path"
 }
 
 download_libreval() {
     local save_path="$RAW_DIR/libreval"
-    if [ -d "$save_path" ]; then
+    if [ -d "$save_path" ] && [ -n "$(ls -A "$save_path" 2>/dev/null)" ]; then
         echo "==> LibreEval already exists at $save_path — skipping."
         return
     fi
     echo "==> Downloading LibreEval → $save_path"
+    local tmp_dir
+    tmp_dir="$(mktemp -d)"
+    git clone --depth=1 https://github.com/Arize-ai/LibreEval.git "$tmp_dir/LibreEval"
     mkdir -p "$save_path"
-    python3 - <<PYEOF
-from datasets import load_dataset
-dataset = load_dataset("Arize-ai/LibreEval")
-dataset.save_to_disk("$save_path")
-print(f"  Saved splits: {list(dataset.keys())}")
-PYEOF
+    cp -r "$tmp_dir/LibreEval/labeled_datasets" "$save_path/"
+    cp -r "$tmp_dir/LibreEval/combined_datasets_for_evals" "$save_path/"
+    cp -r "$tmp_dir/LibreEval/combined_datasets_for_tuning" "$save_path/"
+    rm -rf "$tmp_dir"
     echo "✅ LibreEval saved to $save_path"
 }
 
