@@ -24,12 +24,17 @@ fi
 
 # ── 2. Install pip dependencies ──────────────────────────────────────────────
 echo "==> Installing dependencies from requirements.txt..."
-conda run -n "$ENV_NAME" pip install --upgrade pip
-conda run -n "$ENV_NAME" pip install -r "$REPO_ROOT/requirements.txt"
+CONDA_ENV_PATH="$(conda env list | awk -v env="$ENV_NAME" '$1 == env {print $NF}')"
+if [[ -z "$CONDA_ENV_PATH" ]]; then
+    echo "ERROR: Could not locate conda environment '$ENV_NAME'" >&2
+    exit 1
+fi
+"$CONDA_ENV_PATH/bin/pip" install --upgrade pip
+"$CONDA_ENV_PATH/bin/pip" install -r "$REPO_ROOT/requirements.txt"
 
 # ── 3. Register Jupyter kernel ───────────────────────────────────────────────
 echo "==> Registering Jupyter kernel..."
-conda run -n "$ENV_NAME" python -m ipykernel install \
+"$CONDA_ENV_PATH/bin/python" -m ipykernel install \
     --user \
     --name="$ENV_NAME" \
     --display-name "HallucinationEnv (Python $PYTHON_VERSION)"
