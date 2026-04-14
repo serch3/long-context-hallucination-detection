@@ -34,16 +34,6 @@ This project aims to develop a hallucination detection system utilizing ModernBE
    - Accuracy, precision, recall, F1-score.
    - Analysis by input length and error type.
 
-## Weekly Plans and Project Timeline
-
-| Week | Tasks |
-| --- | --- |
-| 1 | Data review and dataset setup: Survey hallucination detection methods, collect and explore HaluEval1.0 / LibreEval datasets, perform initial preprocessing (tokenization, input formatting). |
-| 2 | Baseline model setup: Fine-tune DistilBERT on a small subset, test training loop, configure metrics, early stopping, and learning rate schedule. |
-| 3 | Main model setup: Fine-tune ModernBERT on the full dataset, implement mixed-precision training, write an `sbatch` shell script for HCP cluster runs. |
-| 4 | Full training and evaluation: Complete training for both models on HCP cluster, evaluate metrics (accuracy, F1, precision/recall), analyze performance by input length. |
-| 5 | Error analysis and optional experiments: Inspect misclassified examples, analyze false positives/negatives. |
-
 ## Team
 
 - Sergio M Mandujano | U00823379
