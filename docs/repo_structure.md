@@ -1,4 +1,4 @@
-# Repo Structure (Draft)
+# Repo Structure
 
 ```text
 long-context-hallucination-detection/
@@ -10,14 +10,11 @@ long-context-hallucination-detection/
 |-- configs/                    # experiment + model configs
 |   |-- distilbert.yaml
 |   |-- modernbert.yaml
-|   |-- training.yaml
-|   `-- paths.yaml
+|   `-- training.yaml
 |
 |-- data/
-|   |-- raw/                    # original datasets (HaluEval, LibreEval)
-|   |-- processed/              # tokenized / cleaned data
-|   |-- interim/                # intermediate transformations
-|   `-- README.md
+|   |-- raw/                    # original HaluEval datasets
+|   `-- processed/              # tokenized / cleaned data
 |
 |-- notebooks/                  # exploration / prototyping
 |   |-- eda.ipynb
@@ -25,58 +22,39 @@ long-context-hallucination-detection/
 |
 |-- src/
 |   |-- __init__.py
+|   |-- utils.py                # seed, logging, shared helpers
 |   |
 |   |-- data/
-|   |   |-- loader.py           # load datasets (HF datasets, CSV, etc.)
-|   |   |-- preprocess.py       # cleaning, truncation, chunking long context
-|   |   `-- collator.py         # batching logic (important for long context)
+|   |   |-- loader.py           # load HaluEval splits → unified DatasetDict
+|   |   `-- preprocess.py       # cleaning, tokenization, truncation
 |   |
 |   |-- models/
 |   |   |-- distilbert.py       # baseline model wrapper
-|   |   |-- modernbert.py       # main model wrapper
-|   |   `-- utils.py            # shared model utilities
+|   |   `-- modernbert.py       # main model wrapper
 |   |
 |   |-- training/
-|   |   |-- trainer.py          # training loop (HF Trainer or custom)
-|   |   |-- loss.py             # custom loss if needed
-|   |   `-- scheduler.py
+|   |   `-- trainer.py          # HF Trainer config + training loop
 |   |
-|   |-- evaluation/
-|   |   |-- metrics.py          # accuracy, F1, AUROC
-|   |   |-- evaluator.py        # evaluation pipeline
-|   |   `-- error_analysis.py   # hallucination patterns
-|   |
-|   |-- inference/
-|   |   |-- predict.py          # run model on new text
-|   |   `-- pipeline.py         # full inference pipeline
-|   |
-|   |-- utils/
-|   |   |-- logging.py
-|   |   |-- seed.py
-|   |   `-- helpers.py
-|   |
-|   `-- experiments/
-|       |-- run_experiment.py   # main entrypoint
-|       `-- compare_models.py   # distilbert vs modernbert
+|   `-- evaluation/
+|       |-- metrics.py          # accuracy, F1, AUROC
+|       |-- evaluator.py        # load checkpoint → JSON report
+|       `-- error_analysis.py   # FP/FN analysis bucketed by input length
 |
-|-- scripts/                    # CLI scripts for reproducibility
+|-- scripts/                    # CLI entrypoints
 |   |-- download_data.sh
-|   |-- preprocess.py
-|   |-- train_distilbert.py
-|   |-- train_modernbert.py
-|   |-- evaluate.py
-|   `-- benchmark.py
+|   |-- setup_env.sh
+|   |-- run_experiment.py       # main entrypoint: wires data→train→eval
+|   `-- compare_models.py       # load both result JSONs → comparison table
 |
 |-- results/
 |   |-- logs/
 |   |-- metrics/
-|   |-- plots/
-|   `-- tables/
+|   `-- plots/
 |
-|-- checkpoints/                # saved models (gitignore)
+|-- checkpoints/                # saved models (gitignored)
 |
-`-- docs/                       # optional: report, paper draft
+`-- docs/
     |-- proposal.md
-    |-- report.md
-    ...
+    |-- plan.md
+    `-- repo_structure.md
 ```
