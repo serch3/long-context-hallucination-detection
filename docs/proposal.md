@@ -28,7 +28,7 @@ This project aims to develop a hallucination detection system utilizing ModernBE
 1. Preprocess text:
    - Combine context + answer.
    - Tokenization with Hugging Face tokenizers.
-   - Input truncation: 512 tokens for DistilBERT, up to 2048 tokens for ModernBERT.
+   - Input truncation: 512 tokens for DistilBERT, up to 8192 tokens for ModernBERT.
 2. Train classifiers using Hugging Face Trainer with fine-tuning techniques (such as learning rate scheduling, early stopping, mixed-precision, and dropout), or a manual PyTorch training loop if time allows.
 3. Evaluate with metrics:
    - Accuracy, precision, recall, F1-score.

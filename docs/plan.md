@@ -22,7 +22,7 @@ The project is split into five modules. Each can be developed and tested in isol
 ### M1 — Data Pipeline
 1. **EDA** (`notebooks/eda.ipynb`): inspect HaluEval splits (qa, dialogue, summarization), label balance, token length distribution.
 2. **Loader** (`src/data/loader.py`): wrap HF `datasets` to return a unified `DatasetDict` with columns `[input_text, label]`.
-3. **Preprocessor** (`src/data/preprocess.py`): combine context + response, tokenize, truncate to 512 (DistilBERT) / 2048 (ModernBERT), write to `data/processed/`.
+3. **Preprocessor** (`src/data/preprocess.py`): combine context + response, tokenize, truncate to 512 (DistilBERT) / 8192 (ModernBERT), write to `data/processed/`.
 
 **Done when:** `loader.py` and `preprocess.py` each have unit tests that pass on a 100-sample slice (integrity check not training).
 
