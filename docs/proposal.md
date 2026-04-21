@@ -14,7 +14,7 @@ This project aims to develop a hallucination detection system utilizing ModernBE
 
 ### Dataset
 
-- Primary: [HaluEval1.0](https://huggingface.co/datasets/pminervini/HaluEval) or [LibreEval](https://github.com/Arize-ai/LibreEval)
+- Primary: [HaluEval1.0](https://github.com/RUCAIBox/HaluEval) and [LibreEval](https://github.com/Arize-ai/LibreEval)
 - Contains LLM-generated answers labeled as factual or hallucinated.
 - Inputs include prompts/questions, context, and generated responses.
 
