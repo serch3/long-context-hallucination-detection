@@ -49,11 +49,28 @@ bash scripts/setup_env.sh
 # 3. Activate env
 conda activate hallucination_env
 
-# 4. Download datasets — choose halueval, libreval, or all
+# 4. Install the project package (makes `src` importable from any script)
+pip install -e .
+
+# 5. Download datasets — choose halueval, libreval, or all
 #    Data is saved to data/raw/{name}/ from the project root
 bash scripts/download_data.sh halueval
 ```
 
 ---
 
-## HPC / sbatch
+## Verify the setup locally
+
+Run a 2-epoch smoke test on a 500-sample slice to confirm the full pipeline works:
+
+```bash
+python scripts/smoke_test_training.py
+```
+
+You should see training loss decrease over the two epochs. The checkpoint lands in `checkpoints/smoke_test/`.
+
+---
+
+## Running on the cluster
+
+See **[docs/cluster_training.md](cluster_training.md)** for iTiger HPC setup, job submission, and result retrieval.
