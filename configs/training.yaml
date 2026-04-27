@@ -1,0 +1,18 @@
+# Shared training hyperparameters — inherited by model-specific configs.
+
+num_train_epochs: 5
+learning_rate: 2.0e-5
+weight_decay: 0.01
+warmup_ratio: 0.06
+lr_scheduler_type: cosine
+
+eval_strategy: epoch
+save_strategy: epoch
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+greater_is_better: false
+early_stopping_patience: 3
+
+logging_steps: 50
+dataloader_num_workers: 4
+seed: 42
