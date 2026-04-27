@@ -1,0 +1,15 @@
+# ModernBERT fine-tuning config.
+# Inherits shared hyperparameters from training.yaml.
+
+model_name_or_path: answerdotai/ModernBERT-base
+max_length: 8192
+output_dir: checkpoints/modernbert
+
+# Smaller batch to fit long sequences in GPU memory; gradient accumulation
+# keeps the effective batch size at 32.
+per_device_train_batch_size: 4
+gradient_accumulation_steps: 8
+per_device_eval_batch_size: 8
+fp16: true
+
+run_name: modernbert-halueval

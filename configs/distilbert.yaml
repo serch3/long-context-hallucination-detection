@@ -1,0 +1,12 @@
+# DistilBERT fine-tuning config.
+# Inherits shared hyperparameters from training.yaml.
+
+model_name_or_path: distilbert-base-uncased
+max_length: 512
+output_dir: checkpoints/distilbert
+
+per_device_train_batch_size: 32
+per_device_eval_batch_size: 64
+fp16: true
+
+run_name: distilbert-halueval
