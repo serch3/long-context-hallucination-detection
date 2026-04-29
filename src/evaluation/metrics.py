@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.metrics import accuracy_score, precision_recall_f1_score_support, roc_auc_score
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
 from transformers import EvalPrediction
 
 def compute_metrics(eval_pred: EvalPrediction) -> dict:
@@ -36,7 +36,7 @@ def compute_metrics(eval_pred: EvalPrediction) -> dict:
         except ValueError:
             auroc = float('nan')
 
-    precision, recall, f1, _ = precision_recall_f1_score_support(
+    precision, recall, f1, _ = precision_recall_fscore_support(
         labels, predictions, average='binary' if logits.shape[-1] == 2 else 'macro', zero_division=0
     )
     acc = accuracy_score(labels, predictions)

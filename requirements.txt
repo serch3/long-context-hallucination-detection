@@ -4,9 +4,12 @@ pandas>=2.1.0
 scikit-learn>=1.5.0
 
 # Hugging Face
-transformers>=4.48.0,<5.0  # 4.48+ required for ModernBERT support
 datasets>=2.14.0
-tokenizers>=0.19.0
+# pin tokenizers to a transformers-compatible range
+# Use a transformers/tokenizers pair compatible with iTiger environment
+# Pin transformers to a concrete 4.57.x release that accepts tokenizers 0.22.x
+transformers==4.57.5  # fixed to avoid resolver backtracking
+tokenizers>=0.22,<0.23
 evaluate>=0.4.0             # compute_metrics for HF Trainer
 
 # PyTorch (install matching versions — see pytorch.org for CUDA-specific builds)
