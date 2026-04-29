@@ -53,15 +53,22 @@ Raw data lands in `data/raw/halueval/`. Subsequent runs read from there directly
 ---
 
 ## 4. Submit training jobs
-
 ```bash
-# DistilBERT — ~4–6 hours, 1 GPU, 64 GB RAM
+# DistilBERT on default dataset mode (HaluEval) — ~4–6 hours
 sbatch cluster/train_distilbert.sh
 
-# ModernBERT — ~12–20 hours, 1 GPU, 128 GB RAM
+# ModernBERT on default dataset mode (HaluEval) — ~12–20 hours
 sbatch cluster/train_modernbert.sh
-```
 
+# DistilBERT on LibreEval only
+TRAIN_ARGS="--dataset libreval --libreval-splits tuning_train tuning_test" sbatch cluster/train_distilbert.sh
+
+# DistilBERT on combined HaluEval + LibreEval
+TRAIN_ARGS="--dataset both" sbatch cluster/train_distilbert.sh
+
+# ModernBERT on combined HaluEval + LibreEval
+TRAIN_ARGS="--dataset both" sbatch cluster/train_modernbert.sh
+```
 Monitor jobs:
 
 ```bash

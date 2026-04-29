@@ -117,6 +117,11 @@ def main() -> None:
 
     cfg = load_config(args.model_config, args.training_config)
 
+    # Update run_name to include dataset if not the default HaluEval
+    if cfg.run_name and args.dataset != "halueval":
+        base_name = cfg.run_name.replace("-halueval", "")
+        cfg.run_name = f"{base_name}-{args.dataset}"
+
     all_data = _load_training_data(args)
     split = all_data.train_test_split(test_size=args.eval_split, seed=cfg.seed)
 
