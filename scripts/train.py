@@ -10,7 +10,9 @@ Usage (cluster):
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from pathlib import Path
 
 import yaml
 from datasets import Dataset, DatasetDict, concatenate_datasets
@@ -138,6 +140,30 @@ def main() -> None:
 
     print(f"Starting training — output dir: {cfg.output_dir}")
     trainer.train()
+    final_metrics = trainer.evaluate(eval_dataset=tokenized["eval"])
+
+    metrics_dir = Path("results") / "metrics"
+    metrics_dir.mkdir(parents=True, exist_ok=True)
+
+    run_label = cfg.run_name or Path(cfg.output_dir).name
+    metrics_path = metrics_dir / f"{run_label}_{args.dataset}_eval_metrics.json"
+    with metrics_path.open("w") as f:
+        json.dump(
+            {
+                "model_name_or_path": model_name,
+                "dataset": args.dataset,
+                "halueval_tasks": args.tasks,
+                "libreval_splits": args.libreval_splits,
+                "eval_split": args.eval_split,
+                "seed": cfg.seed,
+                "output_dir": cfg.output_dir,
+                "metrics": final_metrics,
+            },
+            f,
+            indent=2,
+        )
+
+    print(f"Evaluation metrics saved to: {metrics_path}")
     print(f"Done. Checkpoint saved to: {cfg.output_dir}")
 
 

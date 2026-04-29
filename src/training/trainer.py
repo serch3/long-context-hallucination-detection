@@ -16,6 +16,7 @@ from transformers import (
 )
 
 from src.models.base import ModelBundle
+from src.evaluation.metrics import compute_metrics
 
 
 @dataclass
@@ -107,5 +108,6 @@ def build_trainer(
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         data_collator=data_collator,
+        compute_metrics=compute_metrics,
         callbacks=callbacks,
     )
