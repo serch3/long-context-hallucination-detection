@@ -11,12 +11,12 @@ from __future__ import annotations
 
 import argparse
 import sys
-from pathlib import Path
 
 import yaml
-from datasets import DatasetDict
+from datasets import Dataset, DatasetDict, concatenate_datasets
 
 from src.data.halueval_loader import DEFAULT_TASKS, load_halueval_dataset_dict
+from src.data.libreval_loader import DEFAULT_SPLITS, load_libreval_dataset_dict
 from src.data.preprocess import build_tokenizer, preprocess_dataset_dict
 from src.models.distilbert import build_distilbert
 from src.models.modernbert import build_modernbert
@@ -29,14 +29,79 @@ _MODEL_BUILDERS = {
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Fine-tune a classifier on HaluEval.")
+    p = argparse.ArgumentParser(description="Fine-tune a classifier on HaluEval, LibreEval, or both.")
     p.add_argument("--model-config", required=True, help="Model YAML (e.g. configs/distilbert.yaml)")
     p.add_argument("--training-config", default="configs/training.yaml", help="Shared training YAML")
-    p.add_argument("--data-dir", default=None, help="Override path to raw HaluEval data")
+    p.add_argument(
+        "--dataset",
+        choices=["halueval", "libreval", "both"],
+        default="halueval",
+        help="Which dataset source to train on.",
+    )
+    p.add_argument("--data-dir", default=None, help="Deprecated alias for --halueval-data-dir")
+    p.add_argument("--halueval-data-dir", default=None, help="Override path to raw HaluEval data")
+    p.add_argument("--libreval-data-dir", default=None, help="Override path to raw LibreEval data")
     p.add_argument("--tasks", nargs="+", default=list(DEFAULT_TASKS), help="HaluEval tasks to include")
+    p.add_argument("--libreval-splits", nargs="+", default=list(DEFAULT_SPLITS), help="LibreEval splits to include")
     p.add_argument("--eval-split", type=float, default=0.1, help="Fraction held out for eval")
-    p.add_argument("--limit", type=int, default=None, help="Cap examples per task (for smoke tests)")
+    p.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Cap examples per HaluEval task / LibreEval split (for smoke tests)",
+    )
     return p.parse_args()
+
+
+def _load_halueval_data(args: argparse.Namespace) -> Dataset:
+    data_dir = args.halueval_data_dir or args.data_dir
+    loader_kwargs: dict = {}
+    if data_dir:
+        loader_kwargs["data_dir"] = data_dir
+
+    print(f"Loading HaluEval tasks: {args.tasks}")
+    halueval = load_halueval_dataset_dict(
+        tasks=args.tasks,
+        limit_per_task=args.limit,
+        combine_tasks=True,
+        **loader_kwargs,
+    )
+    return halueval["data"]
+
+
+def _load_libreval_data(args: argparse.Namespace) -> Dataset:
+    loader_kwargs: dict = {}
+    if args.libreval_data_dir:
+        loader_kwargs["data_dir"] = args.libreval_data_dir
+
+    print(f"Loading LibreEval splits: {args.libreval_splits}")
+    libreval = load_libreval_dataset_dict(
+        splits=args.libreval_splits,
+        limit_per_split=args.limit,
+        **loader_kwargs,
+    )
+    return concatenate_datasets(list(libreval.values()))
+
+
+def _load_training_data(args: argparse.Namespace) -> Dataset:
+    if args.dataset == "halueval":
+        data = _load_halueval_data(args)
+        print(f"Loaded dataset=halueval with {len(data)} normalized examples")
+        return data
+
+    if args.dataset == "libreval":
+        data = _load_libreval_data(args)
+        print(f"Loaded dataset=libreval with {len(data)} normalized examples")
+        return data
+
+    halueval_data = _load_halueval_data(args)
+    libreval_data = _load_libreval_data(args)
+    merged = concatenate_datasets([halueval_data, libreval_data])
+    print(
+        "Loaded dataset=both with "
+        f"halueval={len(halueval_data)}, libreval={len(libreval_data)}, total={len(merged)} examples"
+    )
+    return merged
 
 
 def main() -> None:
@@ -50,18 +115,8 @@ def main() -> None:
 
     cfg = load_config(args.model_config, args.training_config)
 
-    loader_kwargs: dict = {}
-    if args.data_dir:
-        loader_kwargs["data_dir"] = args.data_dir
-
-    print(f"Loading HaluEval tasks: {args.tasks}")
-    raw = load_halueval_dataset_dict(
-        tasks=args.tasks,
-        limit_per_task=args.limit,
-        combine_tasks=True,
-        **loader_kwargs,
-    )
-    split = raw["data"].train_test_split(test_size=args.eval_split, seed=cfg.seed)
+    all_data = _load_training_data(args)
+    split = all_data.train_test_split(test_size=args.eval_split, seed=cfg.seed)
 
     print(f"Train: {len(split['train'])}  Eval: {len(split['test'])}")
     print(f"Tokenizing with {model_name} (max_length={max_length})...")

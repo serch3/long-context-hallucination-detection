@@ -26,6 +26,7 @@ conda activate "$ENV_PREFIX"
 
 export HF_HOME="/project/$USER/.cache/huggingface"
 export PYTHONPATH="$PROJ_DIR"
+TRAIN_ARGS=${TRAIN_ARGS:-""}
 
 cd "$PROJ_DIR"
 
@@ -35,6 +36,7 @@ echo "==> Started  : $(date)"
 
 python -m scripts.train \
     --model-config    configs/modernbert.yaml \
-    --training-config configs/training.yaml
+    --training-config configs/training.yaml \
+    $TRAIN_ARGS
 
 echo "==> Finished : $(date)"
