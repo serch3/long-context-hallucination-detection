@@ -12,7 +12,9 @@ transformers==4.57.5  # fixed to avoid resolver backtracking
 tokenizers>=0.22,<0.23
 evaluate>=0.4.0             # compute_metrics for HF Trainer
 
-# PyTorch (install matching versions — see pytorch.org for CUDA-specific builds)
+# PyTorch (CUDA-enabled build — uses pytorch's CUDA 12.4 wheel index)
+# If your cluster uses a different CUDA version, change cu124 → cu121 or cu118
+--extra-index-url https://download.pytorch.org/whl/cu124
 torch>=2.2.0
 torchvision>=0.19.0
 torchaudio>=2.2.0
