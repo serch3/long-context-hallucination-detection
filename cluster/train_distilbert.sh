@@ -20,7 +20,6 @@ export TRITON_CACHE_DIR="/project/$USER/.cache/triton"
 export PIP_CACHE_DIR="/project/$USER/.cache/pip"
 export TORCH_EXTENSIONS_DIR="/project/$USER/.cache/torch_extensions"
 export HF_HOME="/project/$USER/.cache/huggingface"
-export TRANSFORMERS_CACHE="/project/$USER/.cache/huggingface"
 export CONDA_ENVS_PATH="/project/$USER/conda_envs"
 export CONDA_PKGS_DIRS="/project/$USER/conda_pkgs"
 
