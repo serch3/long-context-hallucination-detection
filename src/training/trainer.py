@@ -82,6 +82,9 @@ def build_training_args(cfg: TrainerConfig) -> TrainingArguments:
         dataloader_num_workers=cfg.dataloader_num_workers,
         seed=cfg.seed,
         gradient_accumulation_steps=cfg.gradient_accumulation_steps,
+        # GPU safeguards
+        no_cuda=False,
+        dataloader_pin_memory=True,
     )
 
 

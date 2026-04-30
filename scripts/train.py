@@ -17,6 +17,8 @@ from pathlib import Path
 import yaml
 from datasets import Dataset, DatasetDict, concatenate_datasets
 
+import torch
+
 from src.data.halueval_loader import DEFAULT_TASKS, load_halueval_dataset_dict
 from src.data.libreval_loader import DEFAULT_SPLITS, load_libreval_dataset_dict
 from src.data.preprocess import build_tokenizer, preprocess_dataset_dict
@@ -108,6 +110,21 @@ def _load_training_data(args: argparse.Namespace) -> Dataset:
 
 def main() -> None:
     args = parse_args()
+
+    # GPU guard: refuse to train on CPU
+    if not torch.cuda.is_available():
+        sys.exit(
+            "FATAL: CUDA is not available. This training job requires a GPU.\n"
+            "       If running locally, ensure you have a CUDA-enabled PyTorch.\n"
+            "       If running via SLURM, ensure --gres=gpu:1 is set.\n"
+            "       To force CPU training (not recommended), set FORCE_CPU=1."
+        )
+    if not torch.cuda.device_count():
+        sys.exit("FATAL: CUDA is available but no GPU devices found.")
+
+    gpu_name = torch.cuda.get_device_name(0)
+    gpu_mem = torch.cuda.get_device_properties(0).total_memory / (1024 ** 3)
+    print(f"==> GPU      : {gpu_name} ({gpu_mem:.1f} GiB)")
 
     with open(args.model_config) as f:
         model_yaml: dict = yaml.safe_load(f)

@@ -31,8 +31,10 @@ TRAIN_ARGS=${TRAIN_ARGS:-""}
 cd "$PROJ_DIR"
 
 echo "==> Node     : $(hostname)"
-echo "==> GPU      : $(nvidia-smi --query-gpu=name --format=csv,noheader)"
 echo "==> Started  : $(date)"
+
+# ── Preflight: abort if GPU or environment is broken ─────────────────────────
+source "$PROJ_DIR/cluster/_preflight.sh"
 
 python -m scripts.train \
     --model-config    configs/modernbert.yaml \

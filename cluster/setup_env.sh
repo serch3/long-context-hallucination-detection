@@ -56,3 +56,21 @@ echo "    Activate with : conda activate $ENV_PREFIX"
 echo "    Download data : bash scripts/download_data.sh"
 echo "    Submit jobs   : sbatch cluster/train_distilbert.sh"
 echo "                    sbatch cluster/train_modernbert.sh"
+
+# ── 5. Post-install smoke test ───────────────────────────────────────────────
+echo ""
+echo "==> Running post-install smoke test..."
+SMOKE_OK=$(python -c "
+import torch, transformers, datasets, accelerate
+print('OK' if torch.cuda.is_available() else 'NO_CUDA')
+" 2>&1) || {
+    echo "WARNING: Smoke test failed — packages may be missing." >&2
+    echo "         Run 'bash cluster/setup_env.sh' again if training fails." >&2
+}
+
+if [[ "$SMOKE_OK" == "NO_CUDA" ]]; then
+    echo "NOTE: CUDA not available on this node (expected on login node)."
+    echo "      GPU will be available inside SLURM jobs (--gres=gpu:1)."
+elif [[ "$SMOKE_OK" == "OK" ]]; then
+    echo "==> CUDA is available — environment is ready."
+fi
