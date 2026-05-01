@@ -1,0 +1,31 @@
+{
+  "model_name_or_path": "answerdotai/ModernBERT-base",
+  "dataset": "halueval",
+  "halueval_tasks": [
+    "qa",
+    "dialogue",
+    "summarization",
+    "general"
+  ],
+  "libreval_splits": [
+    "non_synthetic",
+    "synthetic",
+    "tuning_train",
+    "tuning_test"
+  ],
+  "eval_split": 0.1,
+  "seed": 42,
+  "output_dir": "checkpoints/modernbert",
+  "metrics": {
+    "eval_loss": 0.17310482263565063,
+    "eval_accuracy": 0.9336536971012246,
+    "eval_f1": 0.9318688315822986,
+    "eval_precision": 0.9109866168689698,
+    "eval_recall": 0.9537308569566634,
+    "eval_auroc": 0.9857487813793493,
+    "eval_runtime": 117.8712,
+    "eval_samples_per_second": 54.729,
+    "eval_steps_per_second": 6.846,
+    "epoch": 5.0
+  }
+}

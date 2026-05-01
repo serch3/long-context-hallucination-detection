@@ -164,6 +164,15 @@ def main() -> None:
     trainer.train()
     final_metrics = trainer.evaluate(eval_dataset=tokenized["eval"])
 
+    # Determine the epoch of the best model (based on metric_for_best_model)
+    best_epoch = None
+    if hasattr(trainer.state, "best_metric") and trainer.state.best_metric is not None:
+        for entry in trainer.state.log_history:
+            if "eval_loss" in entry:
+                if abs(entry["eval_loss"] - trainer.state.best_metric) &lt; 1e-9:
+                    best_epoch = entry.get("epoch")
+                    break
+
     metrics_dir = Path("results") / "metrics"
     metrics_dir.mkdir(parents=True, exist_ok=True)
 
@@ -179,6 +188,7 @@ def main() -> None:
                 "eval_split": args.eval_split,
                 "seed": cfg.seed,
                 "output_dir": cfg.output_dir,
+                "best_epoch": best_epoch,
                 "metrics": final_metrics,
             },
             f,
