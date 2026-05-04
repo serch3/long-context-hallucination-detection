@@ -169,7 +169,7 @@ def main() -> None:
     if hasattr(trainer.state, "best_metric") and trainer.state.best_metric is not None:
         for entry in trainer.state.log_history:
             if "eval_loss" in entry:
-                if abs(entry["eval_loss"] - trainer.state.best_metric) &lt; 1e-9:
+                if abs(entry["eval_loss"] - trainer.state.best_metric) < 1e-9:
                     best_epoch = entry.get("epoch")
                     break
 
